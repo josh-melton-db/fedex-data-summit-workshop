@@ -18,7 +18,7 @@ from util.resource_creation import create_pipeline
 from util.configuration import config
 
 
-config = set_config(dbutils, catalog='default')
+config = set_config(dbutils, catalog='workshop', schema='source_data')
 reset_tables(spark, config, dbutils)
 create_pipeline(config, dbutils)
 land_more_data(spark, dbutils, config, dgconfig)
