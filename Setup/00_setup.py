@@ -18,9 +18,37 @@ from util.resource_creation import create_pipeline
 from util.configuration import config
 
 
-config = set_config(dbutils)
+config = set_config(dbutils, catalog='workshop', schema='source_data')
 reset_tables(spark, config, dbutils)
 create_pipeline(config, dbutils)
+land_more_data(spark, dbutils, config, dgconfig)
+land_financials(spark, config) # Adds reference tables for maintenance/list prices
+
+# COMMAND ----------
+
+from util.configuration import config
+config['inspection_landing']
+
+# COMMAND ----------
+
+new_dgconfig = new_data_config(dgconfig)
+more_iot_data = generate_iot(spark, new_dgconfig)
+more_iot_data.write.saveAsTable(f"{config['catalog']}.{config['schema']}.new_data_to_be_written")
+
+# COMMAND ----------
+
+new_data = spark.read.table(f"{config['catalog']}.{config['schema']}.new_data_to_be_written")
+new_data.display()
+
+# COMMAND ----------
+
+from time import sleep, time
+
+iot_data_days = [new_data.filter(f"dayofyear(timestamp) = {day}") for day in range(1, 367)]
+for i, days_data in enumerate(iot_data_days):
+    land_more_data(spark, dbutils, config, new_dgconfig, iot_data=days_data)
+    print(i, time())
+    sleep(5)
 
 # COMMAND ----------
 

@@ -13,7 +13,8 @@
 # MAGIC - We cast columns to types if possible, which can be more efficient than reading everything as a string when we're confident about the type of a column
 # MAGIC - Any columns that don't match our schema hints get saved in the '_rescued_data' column, which means we can continue processing of valid data and reprocess invalid data later
 # MAGIC - We can infer the types of columns we're unsure of later, providing flexibility to handle changing schemas
-# MAGIC </br></br>The schema inference and rescued data capabilities of Autoloader particularly come in handy when we have upstream producers of data that change the schema of the data without warning, which is unfortunately common with other teams or third party vendors. Now we've got an approach for handling it! To learn more, try our [schema inference and evolution documentation](https://docs.databricks.com/en/ingestion/auto-loader/schema.html). Without further ado, let's define our first table
+# MAGIC </br></br>
+# MAGIC The schema inference and rescued data capabilities of Autoloader particularly come in handy when we have upstream producers of data that change the schema of the data without warning, which is unfortunately common with other teams or third party vendors. Now we've got an approach for handling it! To learn more, try our [schema inference and evolution documentation](https://docs.databricks.com/en/ingestion/auto-loader/schema.html). Without further ado, let's define our first table
 
 # COMMAND ----------
 
@@ -34,7 +35,7 @@ def autoload_sensor_data():
         .option('cloudFiles.format', 'csv')
         .option('cloudFiles.schemaHints', schema_hints)
         .option('cloudFiles.schemaLocation', f"{config['checkpoints']}/sensor")
-        .load(f"{config['sensor_landing']}")
+        .load("/Volumes/workshop/source_data/sensor_bronze")
     )
 
 # COMMAND ----------
@@ -58,7 +59,7 @@ def autoload_inspection_data():
         .option('cloudFiles.format', 'csv')
         .option('cloudFiles.schemaHints', schema_hints)
         .option('cloudFiles.schemaLocation', f"{config['checkpoints']}/inspection")
-        .load(f"{config['inspection_landing']}")
+        .load("/Volumes/workshop/source_data/inspection_bronze")
     )
 
 # COMMAND ----------

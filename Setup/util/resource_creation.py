@@ -15,8 +15,7 @@ def create_pipeline(config, dbutils, serverless=True, tried=0):
                                     serverless=serverless, channel='Preview', continuous=False, development=True,
                     libraries=[PipelineLibrary(notebook=NotebookLibrary(path=folder_path+'/01_data_ingestion')), 
                                 PipelineLibrary(notebook=NotebookLibrary(path=folder_path+'/02_featurization')),
-                                PipelineLibrary(notebook=NotebookLibrary(path=folder_path+'/03_aggregated_metrics')),
-                                PipelineLibrary(notebook=NotebookLibrary(path=folder_path+'/util/configuration.py'))]
+                                PipelineLibrary(notebook=NotebookLibrary(path=folder_path+'/03_aggregated_metrics'))]
                     ).pipeline_id
         pipeline_url = f'{url}/#joblist/pipelines/{pipeline_id}'
         print('DLT Pipeline created at ' + pipeline_url)
@@ -57,7 +56,7 @@ def create_lakeview_dashboard(config, dbutils):
         if 'already exists' in str(e):
             print('Lakeview dashboard already exists, skipping that step. You can view it in the dashboard folder')
         else:    
-            print('Error creating lakeview dashboard, please import dashboard/IOT Anomaly Detection.lvdash.json' +  
+            print('Error creating lakeview dashboard, please import config/IOT Anomaly Detection.lvdash.json' +  
                   ' in Lakeview to see the demo')
             raise e
 

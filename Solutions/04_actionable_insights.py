@@ -10,21 +10,6 @@
 
 # COMMAND ----------
 
-# DBTITLE 1,Install SDK
-# MAGIC %pip install databricks-sdk==0.24.0 -q
-# MAGIC dbutils.library.restartPython() 
-
-# COMMAND ----------
-
-# DBTITLE 1,Import Libraries
-from util.onboarding_setup import dgconfig, new_data_config
-from util.data_generator import generate_iot, land_more_data
-from util.resource_creation import create_sql_assets
-from util.configuration import config
-from util.data_generator import land_financials
-
-# COMMAND ----------
-
 # MAGIC %md
 # MAGIC Now that we have our ETL pipeline built out, let's surface some results! Run the cell below and check the dashboards folder for your Lakeview Dashboard. Feel free to edit or move the widgets and click publish to share your insights with others. You can also schedule the dashboard to email users with fresh insights at regular intervals. The dashboard makes it easy to see our defect rate by factory or relate defect rates to variables like Density or Temperature.
 # MAGIC
@@ -32,20 +17,21 @@ from util.data_generator import land_financials
 
 # COMMAND ----------
 
+# DBTITLE 1,Install SDK
+# MAGIC %pip install databricks-sdk==0.24.0 -q
+# MAGIC dbutils.library.restartPython()
+
+# COMMAND ----------
+
 # DBTITLE 1,Install Dashboard and Alerting
+from util.resource_creation import create_sql_assets
+from util.configuration import config
 create_sql_assets(config, dbutils)
 
 # COMMAND ----------
 
 # MAGIC %md
 # MAGIC In the next cell we'll land about 10,000 more rows worth of raw data files in the landing zone. Try running the pipeline again and notice the number of rows processed by our autoloader streaming tables - it's only the newly arrived data, meaning we don't waste compute (and therefore cost!) reprocessing data we've already seen. You can see the data arrive immediately by refreshing the dashboard
-
-# COMMAND ----------
-
-# DBTITLE 1,Land More Data
-new_dgconfig = new_data_config(dgconfig)
-land_more_data(spark, dbutils, config, new_dgconfig)
-land_financials(spark, config) # Adds reference tables for maintenance/list prices
 
 # COMMAND ----------
 

@@ -1,9 +1,4 @@
 # Databricks notebook source
-# DBTITLE 1,Install Tempo
-# MAGIC %pip install dbl-tempo==0.1.26 -q
-
-# COMMAND ----------
-
 # MAGIC %md
 # MAGIC ### 2. Featurization
 # MAGIC
@@ -20,8 +15,8 @@
 # DBTITLE 1,Anomaly Warnings
 from util.configuration import config
 import dlt
-from tempo import *
-from pyspark.sql.functions import col, when
+from pyspark.sql.functions import col, when, avg, expr
+from pyspark.sql import Window
 
 @dlt.table(
     name=config['anomaly_name'],
@@ -45,31 +40,29 @@ def calculate_anomaly_rules():
 # COMMAND ----------
 
 # DBTITLE 1,Silver Inspection Table
+from pyspark.sql.functions import window
+
 @dlt.table(
     name=config['silver_name'],
     comment='Joins bronze sensor data with defect reports' 
 )
 def create_timeseries_features():
     inspections = dlt.read(config['inspection_name']).drop('_rescued_data')
-    inspections_tsdf = TSDF(inspections, ts_col='timestamp', partition_cols=['device_id']) # Create our inspections TSDF
-    raw_sensors = (
+    # Define a window spec for hourly aggregation
+    windowSpec = Window.partitionBy(['model_id', 'factory_id', 'device_id', 'trip_id']).orderBy(col("timestamp").cast("long")).rangeBetween(-3600, 0)
+    sensors = (
         dlt.read(config['sensor_name'])
         .drop('_rescued_data') # Flip the sign when negative otherwise keep it the same
         .withColumn('air_pressure', when(col('air_pressure') < 0, -col('air_pressure'))
                                     .otherwise(col('air_pressure')))
-    )
-    sensors_tsdf = ( 
-            TSDF(raw_sensors, ts_col='timestamp', partition_cols=['device_id', 'trip_id', 'factory_id', 'model_id'])
-            .EMA('rotation_speed', window=5) # Exponential moving average over five rows
-            .resample(freq='1 hour', func='mean') # Resample into 1 hour intervals
+        .withColumn("sensor_temperature", avg("temperature").over(windowSpec))
+        .withColumn("sensor_density", avg("density").over(windowSpec))
+        .withColumn("sensor_delay", avg("delay").over(windowSpec))
+        .withColumn("sensor_rotation_speed", avg("rotation_speed").over(windowSpec))
+        .withColumn("sensor_air_pressure", avg("air_pressure").over(windowSpec))
     )
     return (
-        inspections_tsdf # Price is right (as-of) join!
-        .asofJoin(sensors_tsdf, right_prefix='sensor')
-        .df # Return the vanilla Spark Dataframe
-        .withColumnRenamed('sensor_trip_id', 'trip_id') # Rename some columns to match our schema
-        .withColumnRenamed('sensor_model_id', 'model_id') 
-        .withColumnRenamed('sensor_factory_id', 'factory_id') 
+        sensors.join(inspections, on=['device_id', 'timestamp'], how='left')
     )
 
 # COMMAND ----------
