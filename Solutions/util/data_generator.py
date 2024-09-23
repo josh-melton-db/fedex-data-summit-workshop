@@ -241,9 +241,10 @@ def delete_entry(w, entry):
     else:
         w.files.delete(entry.path)
 
-def land_more_data(spark, dbutils, config, dgconfig):
+def land_more_data(spark, dbutils, config, dgconfig, iot_data=None):
     print('Generating data, this may take a minute...')
-    iot_data = generate_iot(spark, dgconfig)
+    if not iot_data:
+        iot_data = generate_iot(spark, dgconfig)
     iot_data.write.format('delta').mode('overwrite').save(config['checkpoints']+'/tmp')
     entire_dataset = spark.read.format('delta').load(config['checkpoints']+'/tmp')
     sensor_data = (

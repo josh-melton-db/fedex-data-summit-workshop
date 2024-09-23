@@ -66,13 +66,13 @@ def reset_tables(spark, config, dbutils):
 
 def new_data_config(dgconfig, rows=None, devices=None, start=None, end=None, year=False, mean_temp=30):
     if not rows:
-        rows = random.randint(7500, 12500)
+        rows = random.randint(3500000, 4500000)
     if not devices:
-        devices = random.randint(8, 12)
+        devices = random.randint(450, 550)
     if not start:
         start = datetime.datetime(2024, 1, 1, 0, 0, 0)
     if not end:
-        end = datetime.datetime(2024, 2, 1, 0, 0, 0)
+        end = datetime.datetime(2024, 12, 31, 0, 0, 0)
     dgconfig['shared']['num_rows'] = rows
     dgconfig['shared']['num_devices'] = devices
     dgconfig['shared']['start'] = start
