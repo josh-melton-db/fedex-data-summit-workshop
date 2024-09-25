@@ -11,7 +11,7 @@ import dlt
 from pyspark.sql.functions import lit, col, sum as ps_sum, when, avg, count, first
 
 @dlt.table(
-    name=config['gold_name'],
+    name='inspection_gold',
     comment='Aggregates defects by categorical variables'
 )
 def aggregate_gold_table():
@@ -21,11 +21,15 @@ def aggregate_gold_table():
         .groupBy('device_id', 'factory_id', 'model_id', 'defect')
         .agg(
             count('*').alias('count'),
-            first(col('timestamp')).alias('first_timestamp'),
-            avg(col('sensor_temperature')).alias('average_temperature'),
-            avg(col('sensor_density')).alias('average_density'),
-            avg(col('sensor_delay')).alias('average_delay'),
-            avg(col('sensor_rotation_speed')).alias('average_rotation_speed'),
-            avg(col('sensor_air_pressure')).alias('average_air_pressure')
+            first(col('timestamp_window.start')).alias('window_start'),
+            avg(col('temperature')).alias('average_temperature'),
+            avg(col('density')).alias('average_density'),
+            avg(col('delay')).alias('average_delay'),
+            avg(col('rotation_speed')).alias('average_rotation_speed'),
+            avg(col('air_pressure')).alias('average_air_pressure')
         )
     )
+
+# COMMAND ----------
+
+

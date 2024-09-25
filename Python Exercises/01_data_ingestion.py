@@ -56,6 +56,7 @@ def autoload_sensor_data():
 def autoload_inspection_data():                                  
     schema_hints = 'defect float, timestamp timestamp, device_id integer'
     return (
+        spark
         ... # TODO: read the files from cloud storage using Autoloader
         .load("/Volumes/workshop/source_data/inspection_bronze")
     )
