@@ -26,21 +26,18 @@ WHERE ... -- TODO: filter down to only the rows that meet anomalous conditions: 
 -- DBTITLE 1,Silver Inspection Table
 CREATE OR REFRESH MATERIALIZED VIEW inspection_silver
 AS 
-WITH base_data AS (
-  SELECT
-    ... -- TODO: drop the _rescued_data column
-    -- TODO: Flip the sign on the air pressure column when negative, otherwise keep it the same
-  FROM LIVE.sensor_bronze
-),
-windowed_sensor_data AS (
-  SELECT *,
-    -- TODO: Add a window function to calculate the average of the sensor data over some window
-  FROM base_data
+WITH joined_data AS (
+  SELECT * EXCEPT (...), -- TODO: drop the inspection table's device_id and timestamp columns and the sensor table's air_pressure column
+    -- TODO: when the air_pressure column is negative, flip the sign to positive. Otherwise, keep it the same
+  FROM LIVE.sensor_bronze sensor
+  JOIN LIVE.inspection_bronze inspection 
+      -- TODO: join on device_id and timestamp
 )
-
-SELECT * EXCEPT (inspection.device_id, inspection.timestamp)
-FROM windowed_sensor_data sensor
-... -- TODO: join the LIVE.inspection_bronze table on defice_id and timestamp
+SELECT 
+  -- TODO: SELECT the grouped columns and some aggregations on the measures (temperature, density, delay, 
+  --       rotation_speed, and air_pressure)
+FROM joined_data
+GROUP BY ... -- TODO: Add a window function to calculate the average of the sensor data over some window
 
 -- COMMAND ----------
 
