@@ -9,17 +9,15 @@
 # COMMAND ----------
 
 # DBTITLE 1,Anomaly Warnings
-from util.configuration import config
 import dlt
-from pyspark.sql.functions import col, when, avg, expr
-from pyspark.sql import Window
+from pyspark.sql.functions import col, when, avg, expr, window
 
 @dlt.table(
-    name=config['anomaly_name'],
+    name='anomaly_detected',
     comment='...' # TODO: add table description
 )
 def calculate_anomaly_rules():
-    bronze = dlt.readStream(config['sensor_name'])
+    bronze = dlt.readStream('sensor_bronze')
     return ( 
         ... # TODO: filter down to only the rows that meet anomalous conditions: delay greater than 155, rotation speed greater than 800, temperature greater than 101, density greater than 4.6, and air pressure less than 840
     )
@@ -32,23 +30,25 @@ def calculate_anomaly_rules():
 # COMMAND ----------
 
 # DBTITLE 1,Silver Inspection Table
-from pyspark.sql.functions import window
-
 @dlt.table(
-    name=config['silver_name'],
+    name='inspection_silver',
     comment='...' # TODO: add table description 
 )
 def create_timeseries_features():
-    inspections = dlt.read(config['inspection_name']).drop('_rescued_data')
-    windowSpec = ... # TODO: define a window to calculate over
-    sensors = (
-        dlt.read(config['sensor_name'])
-        .drop('_rescued_data') 
-        .withColumn('air_pressure', ...) # TODO: Flip the sign when negative otherwise keep it the same
-        ... # TODO: calculate additional features over the window
-    )
+    sensors = dlt.read('sensor_bronze')
+    inspections = dlt.read('inspection_bronze').drop('_rescued_data')
+
+    joined_data = ... # TODO: join the dataframes together on device_id and timestamp
+    joined_data = ... # TODO: flip the sign of the air pressure column where it's negative
+
     return (
-        ... # TODO: join the dataframes together on device_id and timestamp
+        joined_data.groupBy(
+            ... # TODO: group by a time window and the dimensional columns device_id, model_id, factory_id, trip_id, and defect
+        ).agg(
+            ... # TODO: calculate some aggregations on the metric columns like temperature, density, delay, rotation speed, and air pressure
+        ).select(
+            ... # TODO: select the columns that will be used for reporting and for downstream gold tables
+        )
     )
 
 # COMMAND ----------

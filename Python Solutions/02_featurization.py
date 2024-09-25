@@ -9,10 +9,8 @@
 # COMMAND ----------
 
 # DBTITLE 1,Anomaly Warnings
-from util.configuration import config
 import dlt
-from pyspark.sql.functions import col, when, avg, expr
-from pyspark.sql import Window
+from pyspark.sql.functions import col, when, avg, expr, window
 
 @dlt.table(
     name='anomaly_detected',
@@ -36,10 +34,8 @@ def calculate_anomaly_rules():
 # COMMAND ----------
 
 # DBTITLE 1,Silver Inspection Table
-from pyspark.sql.functions import window
-
 @dlt.table(
-    name=config['silver_name'],
+    name='inspection_silver',
     comment='Joins bronze sensor data with defect reports' 
 )
 def create_timeseries_features():

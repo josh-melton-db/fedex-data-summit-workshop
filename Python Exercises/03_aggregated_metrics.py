@@ -6,16 +6,15 @@
 # COMMAND ----------
 
 # DBTITLE 1,Gold Inspection Table
-from util.configuration import config
 import dlt
 from pyspark.sql.functions import lit, col, sum as ps_sum, when, avg, count, first
 
 @dlt.table(
-    name=config['gold_name'],
+    name='inspection_silver',
     comment='Aggregates defects by categorical variables'
 )
 def aggregate_gold_table():
-    silver = dlt.read(config['silver_name'])
+    silver = dlt.read('inspection_silver')
     return (
         silver
         ... # TODO: group by device_id, factory_id, model_id, and defect

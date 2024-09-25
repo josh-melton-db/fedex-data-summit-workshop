@@ -23,17 +23,15 @@
 # COMMAND ----------
 
 # DBTITLE 1,Bronze Sensor Table
-from util.configuration import config
 import dlt
 from pyspark.sql.functions import col
 
 @dlt.table(
-    name=config['sensor_name'],
+    name='sensor_bronze',
     comment='...' # TODO: Add a description to the table
 )
 @dlt... # TODO: Flag but retain any values for air_pressure which are negative https://docs.databricks.com/en/delta-live-tables/expectations.html
 def autoload_sensor_data(): 
-    schema_hints = 'device_id integer, trip_id integer, factory_id string, model_id string, timestamp timestamp, airflow_rate double, rotation_speed double, air_pressure float, temperature float, delay float, density float' # Provide hints as to what we expect the schema to be https://docs.databricks.com/en/ingestion/cloud-object-storage/auto-loader/schema.html#override-schema-inference-with-schema-hints
     return ( 
         spark
         ... # TODO: read the files from cloud storage using Autoloader (check the docs here https://docs.databricks.com/en/delta-live-tables/load.html#load-files-from-cloud-object-storage)
@@ -49,12 +47,11 @@ def autoload_sensor_data():
 
 # DBTITLE 1,Bronze Inspection Table
 @dlt.table(
-    name=config['inspection_name'],
+    name='inspection_bronze',
     comment='...' # TODO: Add a description to the table
 ) 
 ... # TODO: Drop any values with null timestamps or device ids https://docs.databricks.com/en/delta-live-tables/expectations.html#multiple-expectations
 def autoload_inspection_data():                                  
-    schema_hints = 'defect float, timestamp timestamp, device_id integer'
     return (
         spark
         ... # TODO: read the files from cloud storage using Autoloader
