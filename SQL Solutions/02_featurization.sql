@@ -34,49 +34,18 @@ WHERE
 -- DBTITLE 1,Silver Inspection Table
 CREATE OR REFRESH MATERIALIZED VIEW inspection_silver
 AS 
-WITH base_data AS (
-  SELECT
-    * EXCEPT(air_pressure, _rescued_data),
-    CASE 
-      WHEN air_pressure < 0 THEN -air_pressure 
-      ELSE air_pressure 
-    END AS air_pressure
-  FROM LIVE.sensor_bronze
-),
-windowed_sensor_data AS (
-  SELECT *,
-    AVG(temperature) OVER (
-      PARTITION BY model_id, factory_id, device_id, trip_id
-      ORDER BY CAST(timestamp AS LONG)
-      RANGE BETWEEN 3600 PRECEDING AND CURRENT ROW
-    ) AS sensor_temperature,
-    AVG(density) OVER (
-      PARTITION BY model_id, factory_id, device_id, trip_id
-      ORDER BY CAST(timestamp AS LONG)
-      RANGE BETWEEN 3600 PRECEDING AND CURRENT ROW
-    ) AS sensor_density,
-    AVG(delay) OVER (
-      PARTITION BY model_id, factory_id, device_id, trip_id
-      ORDER BY CAST(timestamp AS LONG)
-      RANGE BETWEEN 3600 PRECEDING AND CURRENT ROW
-    ) AS sensor_delay,
-    AVG(rotation_speed) OVER (
-      PARTITION BY model_id, factory_id, device_id, trip_id
-      ORDER BY CAST(timestamp AS LONG)
-      RANGE BETWEEN 3600 PRECEDING AND CURRENT ROW
-    ) AS sensor_rotation_speed,
-    AVG(air_pressure) OVER (
-      PARTITION BY model_id, factory_id, device_id, trip_id
-      ORDER BY CAST(timestamp AS LONG)
-      RANGE BETWEEN 3600 PRECEDING AND CURRENT ROW
-    ) AS sensor_air_pressure
-  FROM base_data
+WITH joined_data AS (
+  SELECT * EXCEPT (inspection.device_id, inspection.timestamp)
+  FROM LIVE.sensor_bronze sensor
+  JOIN LIVE.inspection_bronze inspection 
+      ON sensor.device_id = inspection.device_id AND sensor.timestamp = inspection.timestamp
 )
-
-SELECT * EXCEPT (inspection.device_id, inspection.timestamp)
-FROM windowed_sensor_data sensor
-JOIN LIVE.inspection_bronze inspection 
-    ON sensor.device_id = inspection.device_id AND sensor.timestamp = inspection.timestamp
+SELECT 
+  window as timestamp_window, device_id, model_id, factory_id, trip_id, defect,
+  AVG(temperature) as temperature, AVG(density) as density, AVG(delay) as delay, 
+  AVG(rotation_speed) as rotation_speed, AVG(air_pressure) as air_pressure 
+FROM joined_data
+GROUP BY window("timestamp", "60 minutes"), device_id, model_id, factory_id, trip_id, defect
 
 -- COMMAND ----------
 

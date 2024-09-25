@@ -14,12 +14,11 @@ SELECT
     model_id,
     defect,
     COUNT(*) AS count,
-    MIN(timestamp) AS first_timestamp,
-    AVG(sensor_temperature) AS average_temperature,
-    AVG(sensor_density) AS average_density,
-    AVG(sensor_delay) AS average_delay,
-    AVG(sensor_rotation_speed) AS average_rotation_speed,
-    AVG(sensor_air_pressure) AS average_air_pressure
+    AVG(temperature) AS average_temperature,
+    AVG(density) AS average_density,
+    AVG(delay) AS average_delay,
+    AVG(rotation_speed) AS average_rotation_speed,
+    AVG(air_pressure) AS average_air_pressure
 FROM
     LIVE.inspection_silver
 GROUP BY
