@@ -21,7 +21,7 @@ from pyspark.sql import Window
 def calculate_anomaly_rules():
     bronze = dlt.readStream(config['sensor_name'])
     return ( 
-        ...
+        ... # TODO: filter down to only the rows that meet anomalous conditions: delay greater than 155, rotation speed greater than 800, temperature greater than 101, density greater than 4.6, and air pressure less than 840
     )
 
 # COMMAND ----------
