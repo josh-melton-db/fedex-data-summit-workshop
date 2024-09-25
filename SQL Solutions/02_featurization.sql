@@ -27,7 +27,7 @@ WHERE
 -- COMMAND ----------
 
 -- MAGIC %md
--- MAGIC Note a few differences in the table we define below from the streaming tables in previous notebook - we're using dlt.read() rather than spark.readStream, meaning that we're reading from our DLT Streaming Tables into a Materialized View. In our Materialized View, we're converting each bronze dataframe to a TSDF, Tempo's time series dataframe, which utilize a ts_col (the timestamp column) and a partition column for each series (in this case, device). The TSDF interface allows us to address the problems above - interpolate missing data with the mean from the surrounding points, calculate an exponential moving average for temperature, and do our "price is right" rules join, known as an as-of join. This allows us to grab the features leading up to the defect warning, without leaking data that arrived afterwards.
+-- MAGIC Note a few differences in the table we define below from the streaming tables in previous notebook - we're using LIVE.table_name rather than cloud_files(), meaning that we're reading from our DLT Streaming Tables into a Materialized View. In our Materialized View, we're joining the two bronze tables together and adding some windowed calculations
 
 -- COMMAND ----------
 

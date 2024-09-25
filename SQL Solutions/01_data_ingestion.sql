@@ -18,11 +18,6 @@
 
 -- COMMAND ----------
 
--- USE CATALOG default; -- insert the catalog from your setup here
--- USE SCHEMA iot_anomaly_detection_josh_melton_databricks_com;-- insert the catalog from your setup here
-
--- COMMAND ----------
-
 -- DBTITLE 1,Bronze Sensor Table
 CREATE OR REFRESH STREAMING TABLE sensor_bronze
 (

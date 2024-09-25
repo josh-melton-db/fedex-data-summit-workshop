@@ -30,8 +30,4 @@ print("schema: ", config['schema'])
 
 # COMMAND ----------
 
-config
-
-# COMMAND ----------
-
 

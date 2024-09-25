@@ -24,4 +24,6 @@ create_pipeline(config, dbutils)
 
 # COMMAND ----------
 
-
+print("Your locations for the rest of the workshop:")
+print("catalog: ", config['catalog'])
+print("schema: ", config['schema'])
