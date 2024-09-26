@@ -29,15 +29,11 @@ device_pandas_df = joined_df.where(f'device_id = {highest_count_device_id}').toP
 
 # COMMAND ----------
 
-encoded_factory = pd.get_dummies(device_pandas_df['factory_id'], prefix='ohe')
-encoded_model = pd.get_dummies(device_pandas_df['model_id'], prefix='ohe')
-features = pd.concat([device_pandas_df.drop('factory_id', axis=1).drop('model_id', axis=1), encoded_factory, encoded_model], axis=1)
-features = features.drop('timestamp', axis=1)
+features = ... # TODO: write the code to generate the required features
 
 # COMMAND ----------
 
-features = features.fillna(method='ffill')
-features = features.fillna(0)
+features = features... # TODO: make sure you've filled in any null values if required for your model
 
 # COMMAND ----------
 
