@@ -23,6 +23,15 @@
 # COMMAND ----------
 
 # MAGIC %md
+# MAGIC Now that you've completed these exercises, consider trying:
+# MAGIC - Customizing a [Genie Space](https://learn.microsoft.com/en-us/azure/databricks/genie/) as described below
+# MAGIC - Building out your own Dashboard further
+# MAGIC - The ML exercises. See if you can use the ML model in your streaming pipeline!
+# MAGIC - Try out the [AI Playground](https://docs.databricks.com/en/large-language-models/ai-playground.html). See how tool usage works - functions like the ones lower in this notebook can be used in Genie or your own custom LLMs!
+
+# COMMAND ----------
+
+# MAGIC %md
 # MAGIC We're landing new data as the workshop goes on. If you run your pipeline again, you'll incrementally ingest the new data. You might see in the DLT event log that some Materialized Views while run as COMPLETE_RECOMPUTE while others show something like GROUP_AGGREGATE or PARTITION_OVERWRITE - what's happening here is DLT automatically determines the most efficient way to get your results, and if there's a shortcut available DLT will take it in order to reduce processing time. For example, consider the scenario where only some devices are updated. Wouldn't it be faster if we avoided re-computing the aggregations in our gold table for devices that didn't receive an update? With Materialized Views, we don't have to worry about answering that question. Out of the box we get simple, great performance.
 
 # COMMAND ----------
@@ -45,7 +54,7 @@
 
 # DBTITLE 1,Add Trusted Asset
 # MAGIC %sql
-# MAGIC -- TODO: optional - create a function and add it to your Genie Space as a trusted asset
+# MAGIC -- TODO: create a function like below and add it to a Genie Space as a trusted asset or to an AI Playground LLM as a tool
 # MAGIC CREATE OR REPLACE FUNCTION ... (
 # MAGIC   start_timestamp STRING COMMENT "A start date, formatted like '2023-05-26' or '2024-01-01'" DEFAULT "2023-01-01", 
 # MAGIC   end_timestamp STRING COMMENT "An end date, formatted like '2023-05-26' or '2024-01-01'" DEFAULT "2023-12-31"

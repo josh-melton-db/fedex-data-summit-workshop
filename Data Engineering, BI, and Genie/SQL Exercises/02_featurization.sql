@@ -20,6 +20,13 @@ WHERE ... -- TODO: filter down to only the rows that meet anomalous conditions: 
 
 -- MAGIC %md
 -- MAGIC Note a few differences in the table we define below from the streaming tables in previous notebook - we're using LIVE.table_name rather than cloud_files(), meaning that we're reading from our DLT Streaming Tables into a Materialized View. In our Materialized View, we're joining the two bronze tables together and adding some windowed calculations
+-- MAGIC
+-- MAGIC In this materialized view, we can [group by a time window](https://docs.databricks.com/en/sql/language-manual/functions/window.html) like below
+-- MAGIC ```
+-- MAGIC SELECT window, min(val), max(val), count(val)
+-- MAGIC FROM table
+-- MAGIC GROUP BY window(stamp, '2 MINUTES 30 SECONDS', '30 SECONDS', '15 SECONDS');
+-- MAGIC ```
 
 -- COMMAND ----------
 
@@ -31,7 +38,7 @@ WITH joined_data AS (
     -- TODO: when the air_pressure column is negative, flip the sign to positive. Otherwise, keep it the same
   FROM LIVE.sensor_bronze sensor
   JOIN LIVE.inspection_bronze inspection 
-      -- TODO: join on device_id and timestamp
+    -- TODO: join on device_id and timestamp
 )
 SELECT 
   -- TODO: SELECT the grouped columns and some aggregations on the measures (temperature, density, delay, 

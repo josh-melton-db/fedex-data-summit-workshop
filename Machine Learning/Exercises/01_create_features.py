@@ -1,8 +1,10 @@
 # Databricks notebook source
+# DBTITLE 1,Import Config
 from util.configuration import config
 
 # COMMAND ----------
 
+# DBTITLE 1,Read Data
 from pyspark.sql.functions import col
 
 sensor_df = spark.read.csv("/Volumes/workshop/source_data/sensor_bronze", header=True)
@@ -18,6 +20,7 @@ display(joined_df)
 
 # COMMAND ----------
 
+# DBTITLE 1,Narrow Dataset
 import pandas as pd
 
 highest_count_device_id = (
@@ -29,14 +32,17 @@ device_pandas_df = joined_df.where(f'device_id = {highest_count_device_id}').toP
 
 # COMMAND ----------
 
+# DBTITLE 1,Create Features
 features = ... # TODO: write the code to generate the required features
 
 # COMMAND ----------
 
+# DBTITLE 1,Address Nulls
 features = features... # TODO: make sure you've filled in any null values if required for your model
 
 # COMMAND ----------
 
+# DBTITLE 1,Write Data
 spark.createDataFrame(features).write.mode('overwrite').saveAsTable(config['feature_table'])
 
 # COMMAND ----------

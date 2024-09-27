@@ -25,7 +25,7 @@ def calculate_anomaly_rules():
 # COMMAND ----------
 
 # MAGIC %md
-# MAGIC Note a few differences in the table we define below from the streaming tables in previous notebook - we're using dlt.read() rather than spark.readStream(), meaning that we're reading from our DLT Streaming Tables into a Materialized View. In our Materialized View, we can more easily create interesting operations like windowing functions. Create some features that will be valuable to leverage in our dashboard and Genie
+# MAGIC Note a few differences in the table we define below from the streaming tables in previous notebook - we're using dlt.read() rather than spark.readStream(), meaning that we're reading from our DLT Streaming Tables into a Materialized View. In our Materialized View, we can more easily leverage complex operations like windowing functions. Create some features that will be valuable to leverage in our dashboard and Genie
 
 # COMMAND ----------
 

@@ -14,10 +14,22 @@
 # MAGIC - Any columns that don't match our schema hints get saved in the '_rescued_data' column, which means we can continue processing of valid data and reprocess invalid data later
 # MAGIC - We can infer the types of columns we're unsure of later, providing flexibility to handle changing schemas
 # MAGIC </br></br>
-# MAGIC The schema inference and rescued data capabilities of Autoloader particularly come in handy when we have upstream producers of data that change the schema of the data without warning, which is unfortunately common with other teams or third party vendors. Now we've got an approach for handling it! To learn more, try our [schema inference and evolution documentation](https://docs.databricks.com/en/ingestion/auto-loader/schema.html). 
+# MAGIC The schema inference and rescued data capabilities of Autoloader particularly come in handy when we have upstream producers of data that change the schema of the data without warning, which is unfortunately common with other teams or third party vendors. Now we've got an approach for handling it! Below is an example, and to learn more, try our [schema inference and evolution documentation](https://docs.databricks.com/en/ingestion/auto-loader/schema.html). 
+# MAGIC
+# MAGIC ```
+# MAGIC @dlt.table
+# MAGIC def customers():
+# MAGIC   return (
+# MAGIC     spark.readStream.format("cloudFiles")
+# MAGIC       .option("cloudFiles.format", "csv")
+# MAGIC       .load("/databricks-datasets/retail-org/customers/")
+# MAGIC   )
+# MAGIC ```
 # MAGIC
 # MAGIC Finally, with DLT we get [expecations](https://docs.databricks.com/en/delta-live-tables/expectations.html). Expectations allow our pipeline to automatically monitor and enforce data quality
-# MAGIC
+# MAGIC ```
+# MAGIC @dlt.expect("valid timestamp", "timestamp > '2012-01-01'")
+# MAGIC ```
 # MAGIC Without further ado, let's define our first table
 
 # COMMAND ----------

@@ -2,7 +2,7 @@
 -- MAGIC %md 
 -- MAGIC ### 1. Data Ingestion
 -- MAGIC
--- MAGIC In this notebook, we create two [Streaming Tables](https://docs.databricks.com/en/sql/language-manual/sql-ref-syntax-ddl-create-streaming-table.html) that read the newly arrived data that's landing in your UC Volume. We'll run our process manually, but you can use a schedule or a [file arrivel trigger](https://docs.databricks.com/en/workflows/jobs/file-arrival-triggers.html) for incremental batch processing. You can run the same pipeline in continuous mode for real-time processing. For more details about the differences, skim our [documentation](https://docs.databricks.com/en/sql/language-manual/sql-ref-syntax-ddl-create-streaming-table.html). First thing's first, we'll get the configuration we used in the setup notebook. Be sure you've run the setup!
+-- MAGIC In this notebook, we create two [Streaming Tables](https://docs.databricks.com/en/sql/language-manual/sql-ref-syntax-ddl-create-streaming-table.html) that read the newly arrived data that's landing in your UC Volume. We'll run our process manually, but you can use a schedule or a [file arrivel trigger](https://docs.databricks.com/en/workflows/jobs/file-arrival-triggers.html) for incremental batch processing. You can run the same pipeline in continuous mode for real-time processing. For more details about the differences, skim our [documentation](https://docs.databricks.com/en/sql/language-manual/sql-ref-syntax-ddl-create-streaming-table.html). First thing's first, be sure you've run the setup!
 
 -- COMMAND ----------
 
@@ -14,10 +14,20 @@
 -- MAGIC - Any columns that don't match our schema hints get saved in the '_rescued_data' column, which means we can continue processing of valid data and reprocess invalid data later
 -- MAGIC - We can infer the types of columns we're unsure of later, providing flexibility to handle changing schemas
 -- MAGIC </br></br>
--- MAGIC The schema inference and rescued data capabilities of Autoloader particularly come in handy when we have upstream producers of data that change the schema of the data without warning, which is unfortunately common with other teams or third party vendors. Now we've got an approach for handling it! To learn more, try our [schema inference and evolution documentation](https://docs.databricks.com/en/ingestion/auto-loader/schema.html). 
+-- MAGIC The schema inference and rescued data capabilities of Autoloader particularly come in handy when we have upstream producers of data that change the schema of the data without warning, which is unfortunately common with other teams or third party vendors. Now we've got an approach for handling it! Check out the example below, or to learn more try our [schema inference and evolution documentation](https://docs.databricks.com/en/ingestion/auto-loader/schema.html). 
+-- MAGIC ```
+-- MAGIC CREATE OR REFRESH STREAMING TABLE customers
+-- MAGIC AS SELECT * FROM cloud_files("/databricks-datasets/retail-org/customers/", "csv")
+-- MAGIC ```
 -- MAGIC
 -- MAGIC Finally, with DLT we get [expecations](https://docs.databricks.com/en/delta-live-tables/expectations.html). Expectations allow our pipeline to automatically monitor and enforce data quality
--- MAGIC
+-- MAGIC ```
+-- MAGIC CREATE OR REFRESH MATERIALIZED VIEW count_verification(
+-- MAGIC   CONSTRAINT no_rows_dropped EXPECT (a_count == b_count)
+-- MAGIC ) AS SELECT * FROM
+-- MAGIC   (SELECT COUNT(*) AS a_count FROM LIVE.tbla),
+-- MAGIC   (SELECT COUNT(*) AS b_count FROM LIVE.tblb)
+-- MAGIC ```
 -- MAGIC Without further ado, let's define our first table
 
 -- COMMAND ----------

@@ -1,7 +1,9 @@
 # Databricks notebook source
 # MAGIC %md
 # MAGIC ### 0. Setup
-# MAGIC Make sure you use a Unity Catalog enabled cluster for this setup! _This notebook will reset any data in the schema_, create the required data objects, and write some newly generated raw files into the landing zone in Unity Catalog [Volumes](https://docs.databricks.com/en/connect/unity-catalog/volumes.html). Once the setup notebook is done (it will only take a minute or two), you can open the DLT pipeline it creates and move on to notebook one, Data Ingestion!
+# MAGIC Make sure you use a Unity Catalog enabled ML cluster for this setup! _The first notebook will reset any data in the schema_, and create the required data objects. Once the setup notebook is done (it will only take a minute or two), you can open the DLT pipeline it creates and move on to notebook one, Data Ingestion!
+# MAGIC
+# MAGIC Throughout the exercises, you'll see `...` representing where to write code, followed by `#TODO:` comments defining what code to write. Feel free to go off script, or grab code from the solutions folder if you get stuck
 
 # COMMAND ----------
 
@@ -22,10 +24,6 @@ reset_tables(spark, config, dbutils)
 print("Your locations for the rest of the workshop:")
 print("catalog: ", config['catalog'])
 print("schema: ", config['schema'])
-
-# COMMAND ----------
-
-config
 
 # COMMAND ----------
 
