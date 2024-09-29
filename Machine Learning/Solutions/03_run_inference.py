@@ -2,6 +2,7 @@
 from util.configuration import config
 import mlflow
 import pandas as pd
+mlflow.set_registry_uri('databricks-uc')
 
 features = spark.read.table(config['feature_table'])
 features_pdf = features.toPandas()
@@ -16,6 +17,8 @@ display(features_pdf)
 # COMMAND ----------
 
 model_udf = mlflow.pyfunc.spark_udf(spark, model_uri)
+expected_columns = [col.name for col in production_model.metadata.signature.inputs]
+features = features.select(*expected_columns)
 features_with_predictions = features.withColumn("predictions", model_udf(*features.columns))
 display(features_with_predictions)
 

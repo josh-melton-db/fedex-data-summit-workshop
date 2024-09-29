@@ -56,6 +56,7 @@ with mlflow.start_run() as run:
 # COMMAND ----------
 
 # DBTITLE 1,Find the best run
+mlflow.set_registry_uri('databricks-uc')
 from mlflow.tracking import MlflowClient
 client = MlflowClient()
 

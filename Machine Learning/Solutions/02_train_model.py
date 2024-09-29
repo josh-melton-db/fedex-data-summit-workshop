@@ -54,6 +54,7 @@ with mlflow.start_run(run_name='RandomForestClassifier') as run:
 
 # COMMAND ----------
 
+mlflow.set_registry_uri('databricks-uc')
 from mlflow.tracking import MlflowClient
 client = MlflowClient()
 

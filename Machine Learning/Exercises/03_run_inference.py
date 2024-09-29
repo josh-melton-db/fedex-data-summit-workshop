@@ -3,6 +3,7 @@
 from util.configuration import config
 import mlflow
 import pandas as pd
+mlflow.set_registry_uri('databricks-uc')
 
 features = spark.read.table(config['feature_table'])
 features_pdf = features.toPandas()
