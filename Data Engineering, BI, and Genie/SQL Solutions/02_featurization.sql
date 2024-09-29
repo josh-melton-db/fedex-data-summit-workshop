@@ -16,8 +16,8 @@ FROM STREAM(LIVE.sensor_bronze)
 WHERE 
     delay > 155 
     AND rotation_speed > 800
-    AND temperature > 101
-    AND density > 4.6
+    AND temperature > 86
+    AND density < 4.1
     AND air_pressure < 840
 
 -- COMMAND ----------

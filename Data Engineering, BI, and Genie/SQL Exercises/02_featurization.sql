@@ -14,7 +14,7 @@ COMMENT '...' -- TODO: Add a table description
 AS 
 SELECT * 
 FROM ...(LIVE.sensor_bronze) -- TODO: read from the sensor bronze table as a stream
-WHERE ... -- TODO: filter down to only the rows that meet anomalous conditions: delay greater than 155, rotation speed greater than 800, temperature greater than 101, density greater than 4.6, and air pressure less than 840
+WHERE ... -- TODO: filter down to only the rows that meet anomalous conditions: delay greater than 155, rotation speed greater than 800, temperature greater than 86, density less than 4.1, and air pressure less than 840
 
 -- COMMAND ----------
 

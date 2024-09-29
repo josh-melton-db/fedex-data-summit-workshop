@@ -1,7 +1,7 @@
 # Databricks notebook source
 # MAGIC %md
 # MAGIC ### 0. Setup
-# MAGIC Make sure you use a Unity Catalog enabled [Machine Learning Runtime](https://docs.databricks.com/en/compute/configure.html#databricks-runtime-versions) cluster for this setup! Once the setup notebook is done (it shouldn't take more than a minute), you can open the DLT pipeline it creates and move on to notebook one, Data Ingestion!
+# MAGIC Use a Unity Catalog enabled ML cluster for this setup, or try connecting to "serverless". Once the setup notebook is done (it shouldn't take more than a minute), you can open the DLT pipeline it creates and move on to notebook one, Data Ingestion!
 
 # COMMAND ----------
 
