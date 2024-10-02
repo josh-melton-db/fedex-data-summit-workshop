@@ -1,2 +1,2 @@
 # fedex-data-summit-workshop
-IOT end to end 
+IOT end to end workshop
