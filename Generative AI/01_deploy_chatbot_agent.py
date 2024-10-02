@@ -87,6 +87,8 @@ spark.sql(f"ALTER TABLE {config['docs_table']} SET TBLPROPERTIES (delta.enableCh
 # Embed and sync chunks to a vector index
 print(f"Embedding docs & creating Vector Search Index, this will take ~5 - 10 minutes...")
 
+# COMMAND ----------
+
 index = vsc.create_delta_sync_index_and_wait(
     endpoint_name=config['vs_endpoint'],
     index_name=config['docs_table']+'_index',
