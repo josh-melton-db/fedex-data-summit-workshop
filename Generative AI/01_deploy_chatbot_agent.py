@@ -1,5 +1,10 @@
 # Databricks notebook source
 # MAGIC %md
+# MAGIC Note: connect to "Serverless" to run this notebook
+
+# COMMAND ----------
+
+# MAGIC %md
 # MAGIC
 # MAGIC # 10 minute demo of Mosaic AI Agent Framework & Agent Evaluation
 # MAGIC
